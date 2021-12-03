@@ -1,5 +1,6 @@
 <?php
 
+use App\Domains\Auth\Models\User;
 use App\Http\Controllers\LocaleController;
 
 /*
@@ -26,3 +27,11 @@ Route::group(['as' => 'frontend.'], function () {
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function () {
     includeRouteFiles(__DIR__.'/backend/');
 });
+
+Route::get('buy/{cookies}', function ($cookies) {
+    $user = User::find(Auth::user()->id);
+    $wallet = $user->wallet;
+    $user->update(['wallet' => $wallet - $cookies * 1]);
+    Log:info('User ' . $user->email . ' have bought ' . $cookies . ' cookies'); // we need to log who ordered and how much
+    return 'Success, you have bought ' . $cookies . ' cookies!';
+}); 
